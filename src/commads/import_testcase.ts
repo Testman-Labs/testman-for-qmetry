@@ -29,20 +29,17 @@ function getFeaturePaths(featurePath: string): string[] {
     const paths: string[] = [];
 
     if (featurePath.includes(',')) {
-        // Obtener los valores separados por comas y eliminar espacios en blanco
         const pathArray = featurePath.split(',').map(p => p.trim());
 
         for (const path of pathArray) {
             const resolvedPath = resolve(path);
             if (existsSync(resolvedPath)) {
                 if (lstatSync(resolvedPath).isDirectory()) {
-                    // Extraer los archivos .feature del directorio
                     const files = readdirSync(resolvedPath)
                         .filter(file => file.endsWith('.feature'))
                         .map(file => join(resolvedPath, file));
                     paths.push(...files);
                 } else if (resolvedPath.endsWith('.feature')) {
-                    // Es un archivo .feature individual
                     paths.push(resolvedPath);
                 } else {
                     throw new Error(`❌ La ruta no es un archivo .feature ni un directorio válido: ${resolvedPath}`);
@@ -107,8 +104,10 @@ async function procesar_import(jwt: string, projectId: string, document: IFeatur
     if (validateUpdload.status === "Completed") {
         console.log(validateUpdload);
         console.log("✅ Importación completada con éxito.");
+
     } else if (validateUpdload.status === "Failed") {
         throw new Error("❌ Error al importar los casos de prueba");
+
     } else {
         do {
             await new Promise(resolve => setTimeout(resolve, 5000));
@@ -118,6 +117,7 @@ async function procesar_import(jwt: string, projectId: string, document: IFeatur
         if (validateUpdload.status === "Completed") {
             console.log(validateUpdload);
             console.log("✅ Importación completada con éxito.");
+
         } else {
             throw new Error("❌ Error al importar los casos de prueba");
         }
