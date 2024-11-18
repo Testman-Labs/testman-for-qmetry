@@ -6,6 +6,7 @@ import { IFieldTestcase, IFieldTestCycle, IJira, IReportTestCycle, ISettigns } f
 import { report_cycle } from './commads/report_cycle';
 import { oauth_context } from './commads/validate_auth';
 import { generatePDF } from './utils/pdf';
+import { matriz_testcase } from './commads/matriz_testcase';
 
 export let const_jirabase_url = "";
 export let const_fields_testcase: IFieldTestcase[] = [];
@@ -29,7 +30,7 @@ async function runs() {
             const_reports_testcycle = settingsData.reports.testcycle;
         }
 
-        if ('report-cycle-pdf' === getInput('execute')) {
+        if ('report-cycle-pdf' === getInput('execute') || 'matriz-testcase' === getInput('execute')) {
             await executeCommand("");
         } else {
             const jwt = await authenticate();
@@ -84,6 +85,10 @@ async function executeCommand(jwt: string = "") {
                 validate: getInput('exists') === 'true'
             });
             break;
+        case 'matriz-testcase':
+            await matriz_testcase({
+                featurePath: getInput('filepath'),
+            });
         case 'report-cycle':
             const report_cycle_data = await report_cycle({
                 jwt,

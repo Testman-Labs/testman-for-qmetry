@@ -1,0 +1,30 @@
+name: Matriz Test Case
+
+on:
+  workflow_dispatch:
+    inputs:
+      featurepath:
+        description: Ruta al archivo feature
+        required: true
+
+jobs:
+  matriz_testcase:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: 📊 Matriz Test Case
+      uses: "HERA_YOUR_ACTION_PATH"
+      with:
+        execute: matriz-testcase
+        settings: "HERE_YOUR_CONFIG_DIR/settings.json"
+        filepath: ${{ inputs.featurepath }}
+
+    - name: Upload Report xlsx
+      uses: actions/upload-artifact@v4
+      with:
+        name: report-cycle
+        path: '*.xlsx'
+        retention-days: 1
