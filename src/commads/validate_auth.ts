@@ -2,11 +2,13 @@ import { const_auth_jira } from "..";
 import { IJira } from "../types";
 export { oauth_context, user_detail, issue_detail };
 
+let basicAuth = "";
+
 async function oauth_context(user: IJira) {
     console.log('🔐 Autenticando...');
 
     const userAuth = `${user.email}:${user.token}`;
-    const basicAuth: string = `Basic ${btoa(userAuth)}`;
+    basicAuth = `Basic ${btoa(userAuth)}`;
     const host = new URL("/plugins/servlet/ac/com.infostretch.QmetryTestManager/qtm4j-test-management", user.host);
 
     const response = await fetch(host, {
@@ -31,9 +33,6 @@ async function oauth_context(user: IJira) {
 async function user_detail(userId: string) {
     let url = `${const_auth_jira.host}/rest/api/3/user?accountId=${userId}`;
 
-    const userAuth = `${const_auth_jira.email}:${const_auth_jira.token}`;
-    const basicAuth: string = `Basic ${btoa(userAuth)}`;
-
     const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -53,9 +52,6 @@ async function user_detail(userId: string) {
 async function issue_detail(issueKey: string) {
     let url = `${const_auth_jira.host}/rest/api/3/issue/${issueKey}`;
     
-    const userAuth = `${const_auth_jira.email}:${const_auth_jira.token}`;
-    const basicAuth: string = `Basic ${btoa(userAuth)}`;
-
     const response = await fetch(url, {
         method: 'GET',
         headers: {

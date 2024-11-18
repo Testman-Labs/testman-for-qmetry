@@ -17,7 +17,6 @@ const report_cycle = async ({ jwt, project, testCycleId }: IReportCycle) => {
         const custom_fields = getCustomFields(field);
 
         const detail = await cycle_detail(jwt, testCycleId, custom_fields.field_id);
-        const user = await user_detail(detail.data.reporter);
         const cc_story = await cycle_story(jwt, detail.data.id);
 
         if (cc_story.data.length === 0) {
@@ -37,6 +36,7 @@ const report_cycle = async ({ jwt, project, testCycleId }: IReportCycle) => {
         const components = detail.data.components.map((component: any) => component.name).join(", ");
         const estado = total_test.some(test => test.status === 'Exitoso') ? 'Exitoso' : 'Fallido';
         const ambiente = total_test.some(test => test.ambiente === 'No Environment') ? 'No Environment' : total_test[0].ambiente;
+        const user = await user_detail(detail.data.reporter);
 
         const report_data = {
             headerColor: const_reports_testcycle.headerColor,
@@ -55,7 +55,7 @@ const report_cycle = async ({ jwt, project, testCycleId }: IReportCycle) => {
 
         return report_data;
     } catch (error) {
-        throw new Error(`❌ Error al importar el caso de prueba: ${error}`);
+        throw new Error(`❌ Error al generar el reporte: ${error}`);
     }
 };
 
@@ -95,6 +95,9 @@ const getTotalTests = async (jwt: string, detailId: string) => {
     const total_test = [...cycle_execs?.data.map(mapTestCase)];
 
     for (let i = 1; i < per_page; i++) {
+        //Poner un time de 1 segundo para no saturar el servidor
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         const cycle_exec = await cycle_executions(jwt, cycle_execs?.startAt + i, detailId);
         total_test.push(...cycle_exec?.data.map(mapTestCase));
     }
@@ -104,8 +107,14 @@ const getTotalTests = async (jwt: string, detailId: string) => {
 
 const addAttachmentsAndEnvironment = async (jwt: string, detailId: string, total_test: any[]) => {
     for (const test of total_test) {
+        //Poner un time de 1 segundo para no saturar el servidor
+        await new Promise(resolve => setTimeout(resolve, 500));
+
         const ced = await cycle_execetion_detail(jwt, detailId, test.tctcmID);
         test.ambiente = ced.executions.data[0].environment.name;
+
+        //Poner un time de 1 segundo para no saturar el servidor
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         const attach = await cycle_execution_attach(jwt, detailId, test.tceID);
         test.attach = attach.data.length === 0 ? { url: "", name: "" } : { url: attach.data[0].url, name: attach.data[0].name };
