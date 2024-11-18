@@ -1,0 +1,59 @@
+{
+    "name": "@testmanlabs/testman-qmetry",
+    "version": "0.0.1",
+    "description": "Herramienta de última generación para automatizar procesos de Qmetry con soporte BDD",
+    "keywords": [
+        "testmanlabs",
+        "testman-qmetry",
+        "qmetry",
+        "bdd",
+        "automation",
+        "test",
+        "cucumber"
+    ],
+    "author": {
+        "name": "Testman Labs"
+    },
+    "icon": "public/favicon.png",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Testman-Labs/testman-qmetry.git"
+    },
+    "homepage": "https://github.com/Testman-Labs/testman-qmetry#readme",
+    "publishConfig": {
+        "access": "public"
+    },
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.js"
+        }
+    },
+    "scripts": {
+        "build": "ncc build src/index.ts -o dist",
+        "start": "ts-node src/index.ts",
+        "dev": "tsc && node dist/index.js",
+        "test": "jest",
+        "devstart": "ts-node ./src/deno.ts"
+    },
+    "devDependencies": {
+        "@jest/globals": "^29.7.0",
+        "@types/jest": "^29.5.14",
+        "@types/node": "^20.0.0",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.2.5",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.6.3"
+    },
+    "dependencies": {
+        "@actions/core": "^1.11.1",
+        "@testmanlabs/testman-feature": "^1.0.10",
+        "handlebars": "^4.7.8",
+        "node-xlsx": "^0.24.0",
+        "puppeteer": "^23.8.0"
+    }
+}

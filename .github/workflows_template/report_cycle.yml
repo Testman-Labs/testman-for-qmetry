@@ -1,0 +1,40 @@
+name: Report Test Cycle
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: Selecciona el proyecto
+        required: true
+        type: choice
+        options:
+        - '102030:Labs Test'
+      testCycleId:
+        description: ID del ciclo de pruebas
+        required: true
+
+jobs:
+  report-cycle:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - uses: browser-actions/setup-chrome@v1.7.2
+
+    - id: report-cycle
+      name: 📚 Procesar Data Reporte
+      uses: "HERA_YOUR_ACTION_PATH"
+      with:
+        execute: report-cycle
+        settings: "HERE_YOUR_CONFIG_DIR/settings.json"
+        template: "HERE_YOUR_CONFIG_DIR/testcycle.html"
+        username: "HERE_YOUR_SECRET_KEY"
+        secretkey: "HERE_YOUR_SECRET_KEY"
+        project: ${{ inputs.project }}
+        testCycleId: ${{ inputs.testCycleId }}
+
+    - name: 🚨 Output Data
+      run: |
+        echo "Output: ${{ steps.report-cycle.outputs['report-cycle-pdf'] }}"

@@ -1,0 +1,41 @@
+{
+    "constanst": {
+        "jirabase_url": "https://example.atlassian.net"
+    },
+    "fields": {
+        "testcase": [
+            {
+                "type": "public",
+                "name": "automatizable",
+                "value": "No->No Aplica",
+                "xlsHeader": "Automatizable",
+                "qmetryHeader": null
+            },
+            {
+                "type": "public",
+                "name": "type",
+                "value": "Funcional",
+                "xlsHeader": "Tipo de Prueba",
+                "qmetryHeader": null
+            }
+        ],
+        "testcycle": [
+            {   "name": "squad",
+                "value": "Squad"
+            },
+            {   "name": "quarter",
+                "value": "Quarter"
+            },
+            {   "name": "sprint",
+                "value": "Sprint (Personalizado)"
+            }
+        ]
+    },
+    "reports": {
+        "testcycle": {
+            "template": "tests/report_cycle/testcycle.html",
+            "headerColor": "#2f6eba",
+            "headerLogo": "tests/report_cycle/logo_company.png"
+        }
+    }
+}

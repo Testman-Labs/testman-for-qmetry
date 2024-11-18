@@ -1,0 +1,9 @@
+name: "Testman for Qmetry"
+description: "Tesman labs Tools for Qmetry"
+author: "Testman Labs"
+runs:
+  using: "node20"
+  main: "dist/index.js"
+branding:
+  color: 'orange'
+  icon: 'check-square'
