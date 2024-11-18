@@ -89,6 +89,7 @@ async function executeCommand(jwt: string = "") {
             await matriz_testcase({
                 featurePath: getInput('filepath'),
             });
+            break;
         case 'report-cycle':
             const report_cycle_data = await report_cycle({
                 jwt,
