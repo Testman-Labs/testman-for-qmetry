@@ -1,20 +1,11 @@
 <p align="center">
     <a href="#">
-        <img alt="testman-qmetry" src="https://repository-images.githubusercontent.com/885438589/0eb515aa-9df0-4ce4-922b-3498557c7b04">
+        <img alt="testman-qmetry" src="https://repository-images.githubusercontent.com/890138000/49dcedff-2763-4235-9f87-1a0bb592871e">
     </a>
 </p>
 
 <p align="center">
     <strong>Herramienta de última generación para automatizar procesos de Qmetry con soporte BDD</strong>
-</p>
-
-<p align="center">
-    <a href="https://github.com/Testman-Labs/testman-qmetry/actions/workflows/build.yml">
-        <img alt="Importar Test Case" src="https://github.com/Testman-Labs/testman-qmetry/actions/workflows/build.yml/badge.svg?branch=master&event=push">
-    </a>
-     <a href="https://github.com/Testman-Labs/testman-qmetry/actions/workflows/test.yml">
-        <img alt="Importar Test Case" src="https://github.com/Testman-Labs/testman-qmetry/actions/workflows/test.yml/badge.svg?branch=master">
-    </a>
 </p>
 
 ***
