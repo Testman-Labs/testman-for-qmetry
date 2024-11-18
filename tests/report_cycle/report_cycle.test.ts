@@ -1,13 +1,12 @@
 import { describe, expect, test } from "@jest/globals";
 import { generatePDF } from "../../src/utils/pdf";
-import icon from "./logo_company.json";
 
 describe("report_cycle", () => {
 
     test("should generate report", async () => {
         const report_data = {
             headerColor: "#000000",
-            headerLogo: `data:image/png;base64,${icon.image.data}`,
+            headerLogo: `https://e7.pngegg.com/pngimages/243/790/png-clipart-your-company-logo-doing-business-as-company-logo-name-creative-company-logo-free-logo-design-template-text.png`,
             summary: "SDR-1819_CREDITO FLEXIBLE_20240815",
             customField: [
                 {

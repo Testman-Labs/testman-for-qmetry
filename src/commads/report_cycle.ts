@@ -2,7 +2,7 @@ import { resolve } from "path";
 import { const_fields_testcycle, const_reports_testcycle } from "..";
 import { cycle_detail, cycle_execetion_detail, cycle_execution_attach, cycle_executions, cycle_story, field_cycle } from "../utils/request";
 import { issue_detail, user_detail } from "./validate_auth";
-import { readFileSync } from "fs";
+import { readFileSync, statSync } from "fs";
 import { IReportCycle } from "../types";
 import { newDate, newEstado } from "../utils";
 
@@ -24,19 +24,16 @@ const report_cycle = async ({ jwt, project, testCycleId }: IReportCycle) => {
         }
 
         const historia = await getHistorias(cc_story);
-
         const total_test = await getTotalTests(jwt, detail.data.id);
-
         await addAttachmentsAndEnvironment(jwt, detail.data.id, total_test);
-
-        const headerLogoSrc = getHeaderLogoSrc();
-
         const custom_field_data = getCustomFieldData(custom_fields, detail);
 
         const components = detail.data.components.map((component: any) => component.name).join(", ");
         const estado = total_test.some(test => test.status === 'Exitoso') ? 'Exitoso' : 'Fallido';
         const ambiente = total_test.some(test => test.ambiente === 'No Environment') ? 'No Environment' : total_test[0].ambiente;
         const user = await user_detail(detail.data.reporter);
+
+        const headerLogoSrc = getHeaderLogoSrc();
 
         const report_data = {
             headerColor: const_reports_testcycle.headerColor,
@@ -52,9 +49,9 @@ const report_cycle = async ({ jwt, project, testCycleId }: IReportCycle) => {
             ambiente,
             estado
         };
-
         return report_data;
     } catch (error) {
+        console.error(`❌ Error al generar el reporte: ${error}`);
         throw new Error(`❌ Error al generar el reporte: ${error}`);
     }
 };
@@ -122,9 +119,10 @@ const addAttachmentsAndEnvironment = async (jwt: string, detailId: string, total
 };
 
 const getHeaderLogoSrc = () => {
-    const headerLogoPath = resolve(const_reports_testcycle.headerLogo);
-    const headerLogoBase64 = readFileSync(headerLogoPath).toString('base64');
-    return `data:image/png;base64,${headerLogoBase64}`;
+    if (!const_reports_testcycle.headerLogo) {
+        throw new Error("La ruta del logo del encabezado no está definida");
+    }
+    return const_reports_testcycle.headerLogo;
 };
 
 const getCustomFieldData = (custom_fields: any, detail: any) => {

@@ -90,13 +90,13 @@ async function executeCommand(jwt: string = "") {
                 project: getInput('project'),
                 testCycleId: getInput('testCycleId')
             })
-            setOutput('report-cycle-pdf', report_cycle_data);
-
+            const escapedReportCycleData = encodeURIComponent(JSON.stringify(report_cycle_data));
+            setOutput('report-cycle', escapedReportCycleData);
             break;
         case 'report-cycle-pdf':
             await generatePDF(
                 getInput('template'),
-                getInput('report-cycle-pdf')
+                getInput('data')
             );
             break;
         default:

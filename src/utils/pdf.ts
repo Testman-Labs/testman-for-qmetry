@@ -4,6 +4,13 @@ import { launch } from "puppeteer";
 
 export async function generatePDF(templatePath:string, data: any) {
     console.log("Generando PDF");
+
+    //validar si la data es un json
+    if (typeof data !== 'object') {
+        console.warn('La data no es un objeto JSON');
+        const decodedData = decodeURIComponent(data);
+        data = JSON.parse(decodedData);
+    }
     
     // Cargar y compilar la plantilla HTML
     const templateSource = readFileSync(templatePath, 'utf-8');

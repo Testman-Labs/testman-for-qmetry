@@ -23,18 +23,33 @@ jobs:
 
     - uses: browser-actions/setup-chrome@v1.7.2
 
-    - id: report-cycle
+    - id: reportcycle
       name: 📚 Procesar Data Reporte
-      uses: "HERA_YOUR_ACTION_PATH"
+      uses: "HERE_YOUR_ACTION_PATH"
       with:
         execute: report-cycle
         settings: "HERE_YOUR_CONFIG_DIR/settings.json"
-        template: "HERE_YOUR_CONFIG_DIR/testcycle.html"
         username: "HERE_YOUR_SECRET_KEY"
         secretkey: "HERE_YOUR_SECRET_KEY"
         project: ${{ inputs.project }}
         testCycleId: ${{ inputs.testCycleId }}
 
-    - name: 🚨 Output Data
+    - id: transformdata
+      name: 🚨 Tratamiento de Datos (Opcional)
       run: |
-        echo "Output: ${{ steps.report-cycle.outputs['report-cycle-pdf'] }}"
+        node "HERE_YOUR_CONFIG_DIR/transform_data.js" -- --data="${{ steps.reportcycle.outputs['report-cycle'] }}" > transformed_data.json
+        echo "::set-output name=data::$(cat transformed_data.json)"
+
+    - name: 💾 Generar Reporte
+      uses: "HERE_YOUR_ACTION_PATH"
+      with:
+        execute: report-cycle-pdf
+        settings: "HERE_YOUR_CONFIG_DIR/settings.json"
+        template: "HERE_YOUR_CONFIG_DIR/template_report.html"
+        data: ${{ steps.transformdata.outputs.data }}
+
+    - name: Upload Report PDF
+      uses: actions/upload-artifact@v4
+      with:
+        path: '*.pdf'
+        retention-days: 1

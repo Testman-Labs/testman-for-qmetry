@@ -33,9 +33,9 @@
     },
     "reports": {
         "testcycle": {
-            "template": "tests/report_cycle/testcycle.html",
+            "template": "tests/report_cycle/template_report.html",
             "headerColor": "#2f6eba",
-            "headerLogo": "tests/report_cycle/logo_company.png"
+            "headerLogo": "https://e7.pngegg.com/pngimages/243/790/png-clipart-your-company-logo-doing-business-as-company-logo-name-creative-company-logo-free-logo-design-template-text.png"
         }
     }
 }
