@@ -109,10 +109,14 @@ async function procesar_import(jwt: string, projectId: string, document: IFeatur
         throw new Error("❌ Error al importar los casos de prueba");
 
     } else {
+        let attempts = 0;
+        const maxAttempts = 5;
+
         do {
             await new Promise(resolve => setTimeout(resolve, 5000));
             validateUpdload = await validate_upload(jwt, importTC);
-        } while (validateUpdload.status !== "Completed");
+            attempts++;
+        } while (attempts < maxAttempts);
 
         if (validateUpdload.status === "Completed") {
             console.log(validateUpdload);

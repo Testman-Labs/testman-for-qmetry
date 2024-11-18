@@ -1,4 +1,4 @@
-name: Report Test Cycle
+name: Reporte Test Cycle
 
 on:
   workflow_dispatch:
@@ -38,7 +38,11 @@ jobs:
       name: 🚨 Tratamiento de Datos (Opcional)
       run: |
         node "HERE_YOUR_CONFIG_DIR/transform_data.js" -- --data="${{ steps.reportcycle.outputs['report-cycle'] }}" > transformed_data.json
-        echo "::set-output name=data::$(cat transformed_data.json)"
+        echo "data=$(cat transformed_data.json)" >> $GITHUB_OUTPUT
+
+    - name: 🌐 Install Pupperteer
+      run: |
+        npx puppeteer browsers install chrome
 
     - name: 💾 Generar Reporte
       uses: "HERE_YOUR_ACTION_PATH"
@@ -51,5 +55,6 @@ jobs:
     - name: Upload Report PDF
       uses: actions/upload-artifact@v4
       with:
+        name: report-cycle
         path: '*.pdf'
         retention-days: 1
