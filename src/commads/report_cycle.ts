@@ -26,9 +26,10 @@ const report_cycle = async ({ jwt, project, testCycleId }: IReportCycle) => {
         const historia = await getHistorias(cc_story);
         const total_test = await getTotalTests(jwt, detail.data.id);
         await addAttachmentsAndEnvironment(jwt, detail.data.id, total_test);
+
         const custom_field_data = getCustomFieldData(custom_fields, detail);
         console.log("Custom Field Data:", custom_field_data);
-        
+
         console.log("Componentes:", detail.data.components);
         const components = detail.data.components === null ? '' : detail.data.components.map((component: any) => component.name).join(", ");
         const estado = total_test.some(test => test.status === 'Exitoso') ? 'Exitoso' : 'Fallido';
@@ -96,7 +97,6 @@ const getTotalTests = async (jwt: string, detailId: string) => {
     for (let i = 1; i < per_page; i++) {
         //Poner un time de 1 segundo para no saturar el servidor
         await new Promise(resolve => setTimeout(resolve, 500));
-        
         const cycle_exec = await cycle_executions(jwt, cycle_execs?.startAt + i, detailId);
         total_test.push(...cycle_exec?.data.map(mapTestCase));
     }
@@ -105,18 +105,16 @@ const getTotalTests = async (jwt: string, detailId: string) => {
 };
 
 const addAttachmentsAndEnvironment = async (jwt: string, detailId: string, total_test: any[]) => {
+    //Poner un time de 1 segundo para no saturar el servidor
+    // await new Promise(resolve => setTimeout(resolve, 500));
+    const ced = await cycle_execetion_detail(jwt, detailId, total_test[0].tctcmID);
     for (const test of total_test) {
-        //Poner un time de 1 segundo para no saturar el servidor
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        const ced = await cycle_execetion_detail(jwt, detailId, test.tctcmID);
         test.ambiente = ced.executions.data[0].environment.name;
 
-        //Poner un time de 1 segundo para no saturar el servidor
+        // Poner un time de 1 segundo para no saturar el servidor
         await new Promise(resolve => setTimeout(resolve, 500));
-
         const attach = await cycle_execution_attach(jwt, detailId, test.tceID);
-        test.attach = attach.data.length === 0 ? { url: "", name: "" } : { url: attach.data[0].url, name: attach.data[0].name };
+        test.attach = attach.data.length === 0 ? [] : attach.data.map((item: any) => ({ url: item.url, name: item.name }));
     }
 };
 
@@ -128,7 +126,7 @@ const getHeaderLogoSrc = () => {
 };
 
 const getCustomFieldData = (custom_fields: any, detail: any) => {
-    console.log("Custom Fields:",custom_fields.custom_fields);
+    console.log("Custom Fields:", custom_fields.custom_fields);
     console.log("Detail:", JSON.stringify(detail.data.customFields, null, 2));
 
     if (custom_fields.custom_fields.length === 0) {
