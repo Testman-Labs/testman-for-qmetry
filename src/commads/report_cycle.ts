@@ -27,8 +27,10 @@ const report_cycle = async ({ jwt, project, testCycleId }: IReportCycle) => {
         const total_test = await getTotalTests(jwt, detail.data.id);
         await addAttachmentsAndEnvironment(jwt, detail.data.id, total_test);
         const custom_field_data = getCustomFieldData(custom_fields, detail);
-
-        const components = detail.data.components.map((component: any) => component.name).join(", ");
+        console.log("Custom Field Data:", custom_field_data);
+        
+        console.log("Componentes:", detail.data.components);
+        const components = detail.data.components === null ? '' : detail.data.components.map((component: any) => component.name).join(", ");
         const estado = total_test.some(test => test.status === 'Exitoso') ? 'Exitoso' : 'Fallido';
         const ambiente = total_test.some(test => test.ambiente === 'No Environment') ? 'No Environment' : total_test[0].ambiente;
         const user = await user_detail(detail.data.reporter);
@@ -126,6 +128,14 @@ const getHeaderLogoSrc = () => {
 };
 
 const getCustomFieldData = (custom_fields: any, detail: any) => {
+    console.log("Custom Fields:",custom_fields.custom_fields);
+    console.log("Detail:", JSON.stringify(detail.data.customFields, null, 2));
+
+    if (custom_fields.custom_fields.length === 0) {
+        console.log("🚧 No se encontraron campos personalizados para el ciclo de pruebas");
+        return [];
+    }
+
     return custom_fields.custom_fields.map((field: any) => ({
         name: field.name,
         value: detail.data.customFields[field.value].value[0].name
