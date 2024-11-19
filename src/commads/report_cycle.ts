@@ -1,8 +1,6 @@
-import { resolve } from "path";
 import { const_fields_testcycle, const_reports_testcycle } from "..";
 import { cycle_detail, cycle_execetion_detail, cycle_execution_attach, cycle_executions, cycle_story, field_cycle } from "../utils/request";
 import { issue_detail, user_detail } from "./validate_auth";
-import { readFileSync, statSync } from "fs";
 import { IReportCycle } from "../types";
 import { newDate, newEstado } from "../utils";
 
@@ -25,7 +23,7 @@ const report_cycle = async ({ jwt, project, testCycleId }: IReportCycle) => {
 
         const historia = await getHistorias(cc_story);
         const total_test = await getTotalTests(jwt, detail.data.id);
-        await addAttachmentsAndEnvironment(jwt, detail.data.id, total_test);
+        const total_img = await addAttachmentsAndEnvironment(jwt, detail.data.id, total_test);
 
         const custom_field_data = getCustomFieldData(custom_fields, detail);
         console.log("Custom Field Data:", custom_field_data);
@@ -39,6 +37,7 @@ const report_cycle = async ({ jwt, project, testCycleId }: IReportCycle) => {
         const headerLogoSrc = getHeaderLogoSrc();
 
         const report_data = {
+            testCycleId,
             headerColor: const_reports_testcycle.headerColor,
             headerLogo: headerLogoSrc,
             summary: detail.data.summary,
@@ -49,9 +48,12 @@ const report_cycle = async ({ jwt, project, testCycleId }: IReportCycle) => {
             componentes: components,
             historia,
             pruebas: total_test,
+            imagenTotal: total_img,
             ambiente,
             estado
         };
+
+        console.log("Report Data:", JSON.stringify(report_data, null, 2));
         return report_data;
     } catch (error) {
         console.error(`❌ Error al generar el reporte: ${error}`);
@@ -108,6 +110,7 @@ const addAttachmentsAndEnvironment = async (jwt: string, detailId: string, total
     //Poner un time de 1 segundo para no saturar el servidor
     // await new Promise(resolve => setTimeout(resolve, 500));
     const ced = await cycle_execetion_detail(jwt, detailId, total_test[0].tctcmID);
+    let totalAttachments = 0;
     for (const test of total_test) {
         test.ambiente = ced.executions.data[0].environment.name;
 
@@ -115,7 +118,9 @@ const addAttachmentsAndEnvironment = async (jwt: string, detailId: string, total
         await new Promise(resolve => setTimeout(resolve, 500));
         const attach = await cycle_execution_attach(jwt, detailId, test.tceID);
         test.attach = attach.data.length === 0 ? [] : attach.data.map((item: any) => ({ url: item.url, name: item.name }));
+        totalAttachments += attach.data.length;
     }
+    return totalAttachments;
 };
 
 const getHeaderLogoSrc = () => {
